@@ -61,11 +61,13 @@ Request submission, form-based data entry with conditional logic, multi-step app
 
 ## How to Run Locally
 
-**Prerequisites:** .NET 8 SDK, SQL Server LocalDB (included with Visual Studio)
+**Prerequisites:** .NET 8 SDK (download from https://dotnet.microsoft.com/download/dotnet/8.0)
+
+No database server needed — the app uses SQLite and auto-creates its database on first run.
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/club-cog/flankspeed-legacy-demo.git
+git clone https://github.com/COG-GTM/flankspeed-legacy-demo.git
 
 # 2. Navigate to the web project
 cd flankspeed-legacy-demo/FlankSpeedLegacyDemo.Web
@@ -78,7 +80,7 @@ dotnet run
 
 # 5. Open in browser
 # Navigate to https://localhost:5001 (or the URL shown in terminal)
-# Database auto-creates and seeds on first run
+# SQLite database auto-creates and seeds on first run
 ```
 
 ---
