@@ -1,0 +1,130 @@
+@model WorkItem
+@{
+    ViewData["Title"] = Model.Title;
+    var currentUser = (User?)ViewBag.CurrentUser;
+    var canEdit = Model.Status?.Name == "Draft" || Model.Status?.Name == "Returned";
+}
+
+<!-- MIGRATION NOTE [PowerApp]: Approval flow maps to Power Automate triggered by Power Apps. The approval UI in Power Apps would use a Gallery of approval steps with conditional buttons. Power Fx: If(ThisItem.ApproverUserId = User().Email && ThisItem.Decision = "Pending", DisplayMode.Edit, DisplayMode.View) -->
+
+<h2>@Model.Title</h2>
+<a href="/Cwa" class="btn btn-default btn-sm">&laquo; Back to List</a>
+@if (canEdit)
+{
+    <a href="/Cwa/Edit/@Model.Id" class="btn btn-primary btn-sm">Edit</a>
+}
+<hr />
+
+<dl class="dl-horizontal">
+    <dt>ID</dt><dd>@Model.Id</dd>
+    <dt>Module</dt><dd>@Model.Module</dd>
+    <dt>Category</dt><dd>@Model.Category?.Name</dd>
+    <dt>Status</dt><dd>@Model.Status?.Name</dd>
+    <dt>Priority</dt><dd>@Model.Priority</dd>
+    <dt>Submitted By</dt><dd>@Model.SubmittedByUser?.DisplayName</dd>
+    <dt>Team Owner</dt><dd>@Model.TeamOwner</dd>
+    <dt>Due Date</dt><dd>@Model.DueDate?.ToString("yyyy-MM-dd")</dd>
+    <dt>Submitted</dt><dd>@Model.SubmittedDate.ToString("yyyy-MM-dd")</dd>
+    <dt>Last Updated</dt><dd>@Model.LastUpdatedDate.ToString("yyyy-MM-dd HH:mm")</dd>
+    <dt>Description</dt><dd>@(Model.Description ?? "—")</dd>
+    @if (!string.IsNullOrEmpty(Model.Justification))
+    {
+        <dt>Justification</dt><dd>@Model.Justification</dd>
+    }
+    @if (!string.IsNullOrEmpty(Model.BuildingNumber))
+    {
+        <dt>Building Number</dt><dd>@Model.BuildingNumber</dd>
+    }
+    @if (!string.IsNullOrEmpty(Model.AccessLevel))
+    {
+        <dt>Access Level</dt><dd>@Model.AccessLevel</dd>
+    }
+</dl>
+
+<hr />
+<h3>Approval Workflow</h3>
+@if (Model.ApprovalSteps != null && Model.ApprovalSteps.Any())
+{
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr><th>Step</th><th>Order</th><th>Approver</th><th>Decision</th><th>Date</th><th>Remarks</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var step in Model.ApprovalSteps.OrderBy(s => s.StepOrder))
+            {
+                <tr class="@(step.Decision == "Approved" ? "success" : step.Decision == "Rejected" ? "danger" : "")">
+                    <td>@step.StepName</td>
+                    <td>@step.StepOrder</td>
+                    <td>@(step.ApproverUser?.DisplayName ?? "Unassigned")</td>
+                    <td><strong>@step.Decision</strong></td>
+                    <td>@step.DecisionDate?.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@step.Remarks</td>
+                    <td>
+                        @if (step.Decision == "Pending" && currentUser != null && step.ApproverUserId == currentUser.Id)
+                        {
+                            <form method="post" action="/Cwa/Approve" style="display: inline;">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="approvalStepId" value="@step.Id" />
+                                <input type="text" name="remarks" class="form-control input-sm" placeholder="Remarks (optional)" style="display: inline-block; width: 150px; margin-right: 5px;" />
+                                <button type="submit" name="decision" value="Approved" class="btn btn-success btn-xs">Approve</button>
+                                <button type="submit" name="decision" value="Rejected" class="btn btn-danger btn-xs">Reject</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p class="text-muted">No approval steps configured.</p>
+}
+
+<hr />
+<h3>Comments (@(Model.Comments?.Count ?? 0))</h3>
+@if (Model.Comments != null && Model.Comments.Any())
+{
+    foreach (var comment in Model.Comments.OrderByDescending(c => c.CreatedAt))
+    {
+        <div style="border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; background-color: #ffffff;">
+            <strong>@comment.AuthorUser?.DisplayName</strong>
+            <small class="text-muted">@comment.CreatedAt.ToString("yyyy-MM-dd HH:mm")</small>
+            <p style="margin-top: 5px;">@comment.Text</p>
+        </div>
+    }
+}
+<form method="post" action="/Cwa/AddComment" style="margin-top: 10px;">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="workItemId" value="@Model.Id" />
+    <div class="form-group">
+        <textarea name="text" class="form-control" rows="3" placeholder="Add a comment..." required></textarea>
+    </div>
+    <button type="submit" class="btn btn-default btn-sm" style="margin-top: 5px;">Add Comment</button>
+</form>
+
+<hr />
+<h3>Audit History</h3>
+@if (Model.AuditLogs != null && Model.AuditLogs.Any())
+{
+    <table class="table table-striped table-bordered table-condensed">
+        <thead><tr><th>Date</th><th>Action</th><th>By</th><th>Change</th></tr></thead>
+        <tbody>
+            @foreach (var log in Model.AuditLogs.OrderByDescending(l => l.Timestamp))
+            {
+                <tr>
+                    <td>@log.Timestamp.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@log.Action</td>
+                    <td>@log.PerformedByUser?.DisplayName</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(log.OldValue))
+                        {
+                            <text>@log.OldValue &rarr; </text>
+                        }
+                        @log.NewValue
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

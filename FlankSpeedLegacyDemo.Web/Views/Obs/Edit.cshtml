@@ -1,0 +1,79 @@
+@model WorkItem
+@{
+    ViewData["Title"] = "Edit — " + Model.Title;
+    var categories = (List<Category>)ViewBag.Categories;
+    var users = (List<User>)ViewBag.Users;
+}
+
+<!-- MIGRATION NOTE [SPFx]: Edit forms in SPFx would use PropertyPane or a custom React form component -->
+
+<h2>Edit OBS Record</h2>
+<a href="/Obs/Details/@Model.Id" class="btn btn-default btn-sm">&laquo; Back to Details</a>
+<hr />
+
+<form method="post" action="/Obs/Edit/@Model.Id">
+    @Html.AntiForgeryToken()
+    <fieldset>
+        <legend>Record Details</legend>
+
+        <div class="form-group">
+            <label for="Title">Title</label>
+            <input type="text" id="Title" name="Title" class="form-control" value="@Model.Title" required />
+        </div>
+
+        <div class="form-group">
+            <label for="Description">Description</label>
+            <textarea id="Description" name="Description" class="form-control" rows="4">@Model.Description</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="CategoryId">Category</label>
+            <select id="CategoryId" name="CategoryId" class="form-control">
+                @foreach (var c in categories)
+                {
+                    <option value="@c.Id" selected="@(c.Id == Model.CategoryId ? "selected" : null)">@c.Name</option>
+                }
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="Priority">Priority</label>
+            <select id="Priority" name="Priority" class="form-control">
+                <option value="Low" selected="@(Model.Priority == "Low" ? "selected" : null)">Low</option>
+                <option value="Medium" selected="@(Model.Priority == "Medium" ? "selected" : null)">Medium</option>
+                <option value="High" selected="@(Model.Priority == "High" ? "selected" : null)">High</option>
+                <option value="Critical" selected="@(Model.Priority == "Critical" ? "selected" : null)">Critical</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="AssignedToUserId">Assigned To</label>
+            <select id="AssignedToUserId" name="AssignedToUserId" class="form-control">
+                <option value="">Unassigned</option>
+                @foreach (var u in users)
+                {
+                    <option value="@u.Id" selected="@(u.Id == Model.AssignedToUserId ? "selected" : null)">@u.DisplayName (@u.Team)</option>
+                }
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="TeamOwner">Team Owner</label>
+            <select id="TeamOwner" name="TeamOwner" class="form-control">
+                <option value="">Select...</option>
+                <option value="Operations" selected="@(Model.TeamOwner == "Operations" ? "selected" : null)">Operations</option>
+                <option value="IT" selected="@(Model.TeamOwner == "IT" ? "selected" : null)">IT</option>
+                <option value="Logistics" selected="@(Model.TeamOwner == "Logistics" ? "selected" : null)">Logistics</option>
+                <option value="Compliance" selected="@(Model.TeamOwner == "Compliance" ? "selected" : null)">Compliance</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="DueDate">Due Date</label>
+            <input type="date" id="DueDate" name="DueDate" class="form-control" value="@Model.DueDate?.ToString("yyyy-MM-dd")" />
+        </div>
+    </fieldset>
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <a href="/Obs/Details/@Model.Id" class="btn btn-default">Cancel</a>
+</form>

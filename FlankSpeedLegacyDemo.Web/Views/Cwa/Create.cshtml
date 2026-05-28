@@ -1,0 +1,88 @@
+@model WorkItem
+@{
+    ViewData["Title"] = "Submit New Request";
+    var categories = (List<Category>)ViewBag.Categories;
+}
+
+<!-- MIGRATION NOTE [PowerApp]: Conditional visibility maps directly to Power Fx If() and Visible properties. Example: If(dropdownPriority.Selected.Value = "Critical", true, false) applied to Justification field Visible property. This is a KEY DEMO POINT. -->
+
+<h2>Submit New Request</h2>
+<a href="/Cwa" class="btn btn-default btn-sm">&laquo; Back to List</a>
+<hr />
+
+<form method="post" action="/Cwa/Create">
+    @Html.AntiForgeryToken()
+
+    <fieldset>
+        <legend>Basic Information</legend>
+
+        <div class="form-group">
+            <label for="Title">Title</label>
+            <input type="text" id="Title" name="Title" class="form-control" required placeholder="Enter request title" />
+        </div>
+
+        <div class="form-group">
+            <label for="Description">Description</label>
+            <textarea id="Description" name="Description" class="form-control" rows="4" placeholder="Describe your request..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="CategoryId">Category</label>
+            <select id="CategoryId" name="CategoryId" class="form-control" required>
+                <option value="">Select Category...</option>
+                @foreach (var c in categories)
+                {
+                    <option value="@c.Id">@c.Name</option>
+                }
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="Priority">Priority</label>
+            <select id="Priority" name="Priority" class="form-control">
+                <option value="Low">Low</option>
+                <option value="Medium" selected="selected">Medium</option>
+                <option value="High">High</option>
+                <option value="Critical">Critical</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="DueDate">Due Date</label>
+            <input type="date" id="DueDate" name="DueDate" class="form-control" />
+        </div>
+    </fieldset>
+
+    <fieldset id="justification-section" style="display: none;">
+        <legend>Justification (Required for Critical Priority)</legend>
+        <div class="form-group">
+            <label for="Justification">Justification</label>
+            <textarea id="Justification" name="Justification" class="form-control" rows="3" placeholder="Explain why this request is critical..."></textarea>
+        </div>
+    </fieldset>
+
+    <fieldset id="facility-section" style="display: none;">
+        <legend>Facility Access Details</legend>
+        <div class="form-group">
+            <label for="BuildingNumber">Building Number</label>
+            <input type="text" id="BuildingNumber" name="BuildingNumber" class="form-control" placeholder="e.g., Building 12" />
+        </div>
+        <div class="form-group">
+            <label for="AccessLevel">Access Level</label>
+            <select id="AccessLevel" name="AccessLevel" class="form-control">
+                <option value="">Select...</option>
+                <option value="General">General</option>
+                <option value="Restricted">Restricted</option>
+                <option value="Confidential">Confidential</option>
+                <option value="Top Secret">Top Secret</option>
+            </select>
+        </div>
+    </fieldset>
+
+    <button type="submit" class="btn btn-primary">Submit Request</button>
+    <a href="/Cwa" class="btn btn-default">Cancel</a>
+</form>
+
+@section Scripts {
+    <script src="~/js/cwa-form.js"></script>
+}

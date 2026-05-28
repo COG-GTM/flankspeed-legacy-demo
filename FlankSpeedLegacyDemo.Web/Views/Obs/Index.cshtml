@@ -1,0 +1,87 @@
+@model List<WorkItem>
+@{
+    ViewData["Title"] = "OBS Records";
+    var statuses = (List<Status>)ViewBag.Statuses;
+    var categories = (List<Category>)ViewBag.Categories;
+}
+
+<!-- MIGRATION NOTE [SPFx]: This list view maps to an SPFx ListView web part with PnPjs for SharePoint list queries. Filter pattern maps to: Filter(WorkItems, Status.Value = dropdownStatus.Selected.Value) -->
+
+<h2>OBS &mdash; Operational Records</h2>
+<hr />
+
+<form method="get" class="form-inline" style="margin-bottom: 20px; padding: 15px; background-color: #ffffff; border: 1px solid #ddd;">
+    <div class="form-group" style="margin-right: 10px;">
+        <label for="statusFilter">Status:</label>
+        <select name="statusFilter" id="statusFilter" class="form-control input-sm">
+            <option value="">All</option>
+            @foreach (var s in statuses)
+            {
+                <option value="@s.Name" selected="@(ViewBag.StatusFilter == s.Name ? "selected" : null)">@s.Name</option>
+            }
+        </select>
+    </div>
+    <div class="form-group" style="margin-right: 10px;">
+        <label for="categoryFilter">Category:</label>
+        <select name="categoryFilter" id="categoryFilter" class="form-control input-sm">
+            <option value="">All</option>
+            @foreach (var c in categories)
+            {
+                <option value="@c.Name" selected="@(ViewBag.CategoryFilter == c.Name ? "selected" : null)">@c.Name</option>
+            }
+        </select>
+    </div>
+    <div class="form-group" style="margin-right: 10px;">
+        <label for="priorityFilter">Priority:</label>
+        <select name="priorityFilter" id="priorityFilter" class="form-control input-sm">
+            <option value="">All</option>
+            <option value="Low" selected="@(ViewBag.PriorityFilter == "Low" ? "selected" : null)">Low</option>
+            <option value="Medium" selected="@(ViewBag.PriorityFilter == "Medium" ? "selected" : null)">Medium</option>
+            <option value="High" selected="@(ViewBag.PriorityFilter == "High" ? "selected" : null)">High</option>
+            <option value="Critical" selected="@(ViewBag.PriorityFilter == "Critical" ? "selected" : null)">Critical</option>
+        </select>
+    </div>
+    <div class="form-group" style="margin-right: 10px;">
+        <label for="search">Search:</label>
+        <input type="text" name="search" id="search" class="form-control input-sm" value="@ViewBag.Search" placeholder="Search title..." />
+    </div>
+    <button type="submit" class="btn btn-primary btn-sm">Filter</button>
+    <a href="/Obs" class="btn btn-default btn-sm">Clear</a>
+</form>
+
+@if (Model.Any())
+{
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Priority</th>
+                <th>Assigned To</th>
+                <th>Team</th>
+                <th>Submitted</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td><a href="/Obs/Details/@item.Id">@item.Title</a></td>
+                    <td>@item.Category?.Name</td>
+                    <td>@item.Status?.Name</td>
+                    <td>@item.Priority</td>
+                    <td>@(item.AssignedToUser?.DisplayName ?? "Unassigned")</td>
+                    <td>@item.TeamOwner</td>
+                    <td>@item.SubmittedDate.ToString("yyyy-MM-dd")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p class="text-muted">No records found.</p>
+}

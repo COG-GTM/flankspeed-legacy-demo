@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "muhammad-sammy.csharp",
+    "ms-dotnettools.vscode-dotnet-runtime",
+    "fernandoescolar.vscode-solution-explorer",
+    "github.vscode-pull-request-github"
+  ]
+}

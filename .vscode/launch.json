@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Ops Tracker",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${workspaceFolder}/FlankSpeedLegacyDemo.Web/bin/Debug/net8.0/FlankSpeedLegacyDemo.Web.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/FlankSpeedLegacyDemo.Web",
+      "stopAtEntry": false,
+      "env": { "ASPNETCORE_ENVIRONMENT": "Development" },
+      "preLaunchTask": "build"
+    }
+  ]
+}

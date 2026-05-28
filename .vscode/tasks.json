@@ -1,0 +1,21 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build",
+      "type": "shell",
+      "command": "dotnet",
+      "args": ["build", "FlankSpeedLegacyDemo.Web/FlankSpeedLegacyDemo.Web.csproj"],
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "run",
+      "type": "shell",
+      "command": "dotnet",
+      "args": ["run", "--project", "FlankSpeedLegacyDemo.Web/FlankSpeedLegacyDemo.Web.csproj"],
+      "group": "none",
+      "problemMatcher": "$msCompile"
+    }
+  ]
+}

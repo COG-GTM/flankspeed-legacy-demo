@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Ops Tracker</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <nav class="navbar navbar-default navbar-static-top" style="background-color: #003366; border: none; border-radius: 0; margin-bottom: 0;">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-nav">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/" style="color: #ffffff; font-weight: bold;">Ops Tracker</a>
+            </div>
+            <div class="collapse navbar-collapse" id="main-nav">
+                <ul class="nav navbar-nav">
+                    <li><a href="/" style="color: #cccccc;">Home</a></li>
+                    <li><a href="/Obs" style="color: #cccccc;">OBS Records</a></li>
+                    <li><a href="/Obs/Dashboard" style="color: #cccccc;">OBS Dashboard</a></li>
+                    <li><a href="/Cwa" style="color: #cccccc;">CWA Requests</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="color: #cccccc;">
+                            <span class="glyphicon glyphicon-user"></span>
+                            @if (ViewBag.CurrentUser != null)
+                            {
+                                @(((User)ViewBag.CurrentUser).DisplayName)
+                            }
+                            else
+                            {
+                                <text>Select User</text>
+                            }
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            @if (ViewBag.AllUsers != null)
+                            {
+                                foreach (var user in (List<User>)ViewBag.AllUsers)
+                                {
+                                    <li>
+                                        <form method="post" action="/Home/SetUser" style="margin: 0;">
+                                            <input type="hidden" name="id" value="@user.Id" />
+                                            <button type="submit" class="btn btn-link" style="width: 100%; text-align: left; padding: 3px 20px;">
+                                                @user.DisplayName <small class="text-muted">(@user.Role - @user.Team)</small>
+                                            </button>
+                                        </form>
+                                    </li>
+                                }
+                            }
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid" style="padding-top: 20px;">
+        @RenderBody()
+    </div>
+
+    <footer class="footer" style="background-color: #e0e0e0; padding: 15px 0; margin-top: 40px; border-top: 2px solid #003366;">
+        <div class="container-fluid text-center">
+            <small class="text-muted">&copy; 2024 Ops Tracker &mdash; Internal Use Only | Legacy .NET Application</small>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
