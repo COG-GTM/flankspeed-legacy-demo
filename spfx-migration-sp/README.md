@@ -16,19 +16,28 @@ This folder contains the migrated OBS (Operational Business Systems) module, reb
 ## Project Structure
 
 ```
-obs-webparts/
-├── src/
-│   ├── webparts/
-│   │   ├── obsListView/         → Replaces /Obs (list + filters)
-│   │   ├── obsDashboard/        → Replaces /Obs/Dashboard
-│   │   └── obsDetailView/       → Replaces /Obs/Details/{id}
-│   ├── models/                  → TypeScript interfaces (from C# models)
-│   ├── services/                → PnPjs data access (replaces EF Core)
-│   └── common/                  → Shared utilities and constants
-├── config/
-│   └── serve.json               → SPFx local dev config
-├── package.json
-└── tsconfig.json
+spfx-migration-sp/
+├── obs-webparts/                   → SPFx project (builds to .sppkg)
+│   ├── src/
+│   │   ├── webparts/
+│   │   │   ├── obsListView/        → Replaces /Obs (list + filters)
+│   │   │   ├── obsDashboard/       → Replaces /Obs/Dashboard
+│   │   │   └── obsDetailView/      → Replaces /Obs/Details/{id}
+│   │   ├── models/                 → TypeScript interfaces (from C# models)
+│   │   ├── services/               → PnPjs data access (replaces EF Core)
+│   │   └── common/                 → Shared utilities and constants
+│   ├── config/                     → SPFx build configuration
+│   ├── gulpfile.js                 → Build orchestrator
+│   ├── package.json
+│   └── tsconfig.json
+├── provisioning/                   → SharePoint setup scripts
+│   ├── Create-OBSLists.ps1         → Creates all 5 SharePoint Lists
+│   └── Import-OBSSeedData.ps1      → Imports sample data from HTML mockup
+├── docs/                           → Architecture and migration docs
+├── power-fx-formulas/              → C# LINQ → Power Fx mapping
+├── preview-app/                    → Original HTML mockup (reference)
+├── DEPLOYMENT.md                   → Step-by-step deployment guide
+└── README.md                       → This file
 ```
 
 ## Power Fx Expressions
@@ -47,7 +56,10 @@ This launches the SPFx workbench where you can preview the web parts with mock d
 
 ## Deployment
 
-1. Build: `gulp bundle --ship`
-2. Package: `gulp package-solution --ship`
-3. Upload `.sppkg` to SharePoint App Catalog
-4. Add web parts to SharePoint pages or Teams tabs
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for the full step-by-step guide covering:
+
+1. **Provision SharePoint Lists** — Run `Create-OBSLists.ps1` to create the data layer
+2. **Import seed data** — Run `Import-OBSSeedData.ps1` to populate with sample records
+3. **Build** — `gulp bundle --ship && gulp package-solution --ship`
+4. **Deploy** — Upload `obs-webparts.sppkg` to the SharePoint App Catalog
+5. **Add to pages** — Add the OBS web parts to SharePoint pages or Teams tabs

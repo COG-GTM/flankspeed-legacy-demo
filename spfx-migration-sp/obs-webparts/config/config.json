@@ -1,0 +1,32 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "obs-list-view-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/obsListView/ObsListViewWebPart.js",
+          "manifest": "./src/webparts/obsListView/ObsListViewWebPart.manifest.json"
+        }
+      ]
+    },
+    "obs-dashboard-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/obsDashboard/ObsDashboardWebPart.js",
+          "manifest": "./src/webparts/obsDashboard/ObsDashboardWebPart.manifest.json"
+        }
+      ]
+    },
+    "obs-detail-view-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/obsDetailView/ObsDetailViewWebPart.js",
+          "manifest": "./src/webparts/obsDetailView/ObsDetailViewWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {}
+}

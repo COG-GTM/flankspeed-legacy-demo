@@ -21,6 +21,7 @@
   "devDependencies": {
     "@microsoft/sp-build-web": "1.18.2",
     "@microsoft/sp-module-interfaces": "1.18.2",
+    "@microsoft/rush-stack-compiler-4.7": "0.1.0",
     "@types/react": "17.0.45",
     "@types/react-dom": "17.0.17",
     "gulp": "4.0.2",

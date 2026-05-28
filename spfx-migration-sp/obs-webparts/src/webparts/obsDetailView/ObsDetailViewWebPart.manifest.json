@@ -1,0 +1,27 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx/client-side-web-part-manifest.schema.json",
+  "id": "feca5d86-aa57-460d-b64c-55b5eeb5ca6c",
+  "alias": "ObsDetailViewWebPart",
+  "componentType": "WebPart",
+  "version": "*",
+  "manifestVersion": 2,
+  "requiresCustomScript": false,
+  "supportedHosts": [
+    "SharePointWebPart",
+    "TeamsPersonalApp",
+    "TeamsTab"
+  ],
+  "preconfiguredEntries": [
+    {
+      "groupId": "5c03119e-3074-46fd-976b-c60198311f70",
+      "group": { "default": "OBS Module" },
+      "title": { "default": "OBS Detail View" },
+      "description": { "default": "Shows OBS work item details with comments, audit history, and status updates. Replaces the legacy /Obs/Details/{id} route." },
+      "officeFabricIconFontName": "TextDocument",
+      "properties": {
+        "showAuditLog": true,
+        "showAttachments": true
+      }
+    }
+  ]
+}

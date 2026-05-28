@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "obs-webparts-client-side-solution",
+    "id": "0cc6bbe9-4aaf-4bdf-85d1-9f590fbfe4f7",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "Cognition AI",
+      "websiteUrl": "https://cognition.ai",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.18.2"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "OBS Module — SPFx web parts for the Flank Speed legacy migration"
+      },
+      "longDescription": {
+        "default": "Operational Business Systems (OBS) module migrated from .NET MVC to SharePoint Framework. Includes list view with filtering, operations dashboard with summary counts, and detail view with comments and audit history."
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "OBS Module Web Parts",
+        "description": "Deploys the OBS List View, Dashboard, and Detail View web parts.",
+        "id": "a2b3c4d5-e6f7-4890-abcd-ef1234567890",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/obs-webparts.sppkg"
+  }
+}
