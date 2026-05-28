@@ -4,7 +4,7 @@ This document provides two walkthrough variants for demonstrating the Ops Tracke
 
 ---
 
-## Non-Technical Audience Walkthrough (15 min)
+## Non-Technical Audience Walkthrough (~18 min)
 
 *This is the PRIMARY walkthrough for the Flank Speed demo.*
 
@@ -15,8 +15,8 @@ This document provides two walkthrough variants for demonstrating the Ops Tracke
 **Show a simple diagram:**
 ```
 Legacy .NET App ("Ops Tracker")
-    ├── Module A (OBS) → SPFx in SharePoint/Teams
-    └── Module B (CWA) → Power Apps + Power Automate
+    ├── Module A (OBS — Operational Records) → SPFx + Power Fx in SharePoint/Teams
+    └── Module B (CWA — Work Requests)       → Power Apps + Power Fx + Power Automate
 ```
 
 **Talking Points:**
@@ -63,56 +63,101 @@ Legacy .NET App ("Ops Tracker")
 
 ---
 
-### Phase 3: Cascade Analyzes the App (3 min)
+### Phase 3: Demo 1 — OBS → SPFx + Power Fx (Primary Use Case) (5 min)
 
-**Open Windsurf Cascade chat. Enter this prompt:**
+*This is the client's primary use case: migrating the read-heavy OBS module to SPFx in SharePoint/Teams.*
 
-> "Summarize this application's two modules and explain which parts should migrate to SPFx in SharePoint/Teams and which should become a Power App."
+**Step 1: Cascade Analyzes OBS for SPFx Migration (2 min)**
+
+Open Windsurf Cascade chat. Enter this prompt:
+
+> "Analyze the OBS module — the ObsController, OBS views, and dashboard — and explain how each part would migrate to SPFx web parts in SharePoint/Teams. What would the SPFx architecture look like?"
 
 **Narration while Cascade responds:**
-- "Cascade is reading through the entire codebase right now"
-- "It's identifying the patterns — the list views, the form logic, the approval workflow"
-- "Notice it's referencing specific files and code patterns"
-- "It correctly identifies Module A as read-heavy (SPFx candidate) and Module B as form-heavy (Power App candidate)"
+- "We're asking the AI to focus on the operational records module — the client's primary concern"
+- "Cascade is reading through the controller, views, and data patterns"
+- "It's identifying the list view, dashboard, detail view, and collaboration patterns"
+- "Notice how it maps each pattern to a specific SPFx web part type"
+- "This confirms the strategy: these read-heavy, browsing-and-filtering patterns are a natural fit for SPFx in SharePoint/Teams"
 
----
+**Step 2: Cascade Shows SPFx + Power Fx Equivalents (2 min)**
 
-### Phase 4: Cascade Generates Migration Artifacts (3 min)
+Enter this prompt:
 
-**Enter this prompt:**
-
-> "Show me how the conditional form logic in the CWA Create form would look in Power Apps using Power Fx."
-
-**Narration:**
-- "Now it's translating the jQuery conditional logic into Power Fx"
-- "The `If()` expression maps directly to the Visible property in Power Apps"
-- "No manual translation needed — the AI understands both source and target"
-- Don't dwell on syntax — focus on "it mapped the pattern correctly"
-
----
-
-### Phase 5: Create Actionable Work Items (2 min)
-
-**Enter this prompt:**
-
-> "Create 3 GitHub issues to track the migration of the CWA approval workflow to Power Automate. Include specific source files and acceptance criteria."
+> "Show me how the OBS Dashboard summary counts and filtering logic would be expressed using Power Fx in the SPFx context. Include examples for the status counts, priority counts, and the 'My Assigned Items' query."
 
 **Narration:**
-- "Cascade is now creating structured work items with the GitHub MCP plugin"
-- "Each issue references the specific source files involved"
-- "The team can now pick up these issues and execute the migration"
-- Show the created issues in GitHub
+- "Now it's translating the server-side C# queries into Power Fx expressions"
+- "The `CountRows(Filter(...))` pattern replaces the LINQ GroupBy we saw in the legacy code"
+- "The filter dropdowns map to Power Fx `Filter()` with delegable expressions"
+- "This is the bridge — same business logic, modern platform"
+
+**Step 3: Cascade Creates SPFx Migration Work Items (1 min)**
+
+Enter this prompt:
+
+> "Create GitHub issues to track the migration of the OBS module to SPFx. Create one for the list view, one for the dashboard, and one for the detail/comments view. Include the specific source files and acceptance criteria."
+
+**Narration:**
+- "Cascade is creating structured work items using the GitHub integration"
+- "Each issue references the exact legacy source files that need to be migrated"
+- "The team can now pick these up and start executing immediately"
 
 ---
 
-### Phase 6: Close (1 min)
+### Phase 4: Demo 2 — CWA → Power Apps + Power Fx (Secondary Use Case) (4 min)
+
+*This is the client's secondary use case: migrating the form-heavy CWA module to a Power App using Power Fx.*
+
+**Step 1: Cascade Analyzes CWA for Power Apps Migration (1.5 min)**
+
+Enter this prompt:
+
+> "Now analyze the CWA module — the request forms, conditional field logic, and approval workflow — and explain how it maps to a Power Apps canvas app with Power Fx."
+
+**Narration:**
+- "Now we're looking at the work requests module — forms, submissions, and approvals"
+- "This is a different pattern — write-heavy, transactional, with business rules in the form"
+- "Cascade identifies this as a Power Apps candidate, not SPFx — different tool for a different job"
+
+**Step 2: Cascade Shows Power Fx Conditional Logic (1.5 min)**
+
+Enter this prompt:
+
+> "Show me how the conditional field visibility in the CWA Create form — where Priority = Critical shows the Justification field, and Category = Facility Access Request shows the building fields — would look in Power Fx."
+
+**Narration:**
+- "This is the key moment — the jQuery conditional logic maps directly to Power Fx `If()` expressions"
+- "In Power Apps, you'd set the Visible property: `If(dropdownPriority.Selected.Value = \"Critical\", true, false)`"
+- "No jQuery, no JavaScript — just declarative formulas. This is why Power Apps is the right target for this module"
+- "This is also where Power Fx coding assistance comes in — Cascade can help write these formulas"
+
+**Step 3: Cascade Describes the Approval Flow (1 min)**
+
+Enter this prompt:
+
+> "Describe how the CWA approval workflow — the multi-step Approve/Reject logic in CwaController — would be replaced by a Power Automate flow triggered from the Power App."
+
+**Narration:**
+- "The manual approval routing in the .NET code becomes a Power Automate flow"
+- "When a request is submitted in the Power App, it triggers the flow automatically"
+- "Approvers get notifications, can approve/reject from email or Teams — no need to log into a legacy app"
+
+---
+
+### Phase 5: Close (2 min)
 
 **Key Takeaways:**
-- AI analyzed a complete legacy application in seconds
-- It correctly identified migration paths for different patterns
-- It generated working code equivalents in the target platform
-- It created actionable work items connected to source control
+- AI analyzed a complete legacy application and correctly identified two distinct migration paths
+- **OBS → SPFx + Power Fx**: Read-heavy patterns (lists, dashboards, collaboration) belong in SharePoint/Teams
+- **CWA → Power Apps + Power Fx**: Form-heavy patterns (submissions, conditional logic, approvals) belong in Power Apps
+- The AI generated working code equivalents and Power Fx formulas for both paths
+- It created actionable GitHub issues tied to specific source code
 - This accelerates migration timelines from months to weeks
+
+**Why two different paths?**
+- "Not everything should be a Power App, and not everything should be an SPFx web part"
+- "The AI helps identify which pattern fits where — that's the strategy validation the client needs"
 
 ---
 
@@ -122,6 +167,9 @@ Legacy .NET App ("Ops Tracker")
 - If Priority/Category conditional fields don't trigger, check the jQuery is loaded
 - If asked technical questions, switch to the Technical walkthrough below
 - Keep energy on the "AI acceleration" narrative, not the code syntax
+- Lead with OBS/SPFx (Demo 1) since it's the primary use case — don't rush it
+- Demo 2 (CWA/Power Apps) reinforces that the AI picks the right tool for the right pattern
+- If running short on time, you can shorten Demo 2 by combining Steps 1 and 2 into a single prompt
 
 ---
 
