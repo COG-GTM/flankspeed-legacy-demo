@@ -1,0 +1,13 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "solutionName": "obs-webparts",
+    "solutionShortDescription": "OBS Module — SPFx web parts for Flank Speed legacy migration",
+    "environment": "spo",
+    "packageManager": "npm",
+    "framework": "react",
+    "componentType": "webpart",
+    "isCreatingSolution": true,
+    "isDomainIsolated": false,
+    "version": "1.18.2"
+  }
+}

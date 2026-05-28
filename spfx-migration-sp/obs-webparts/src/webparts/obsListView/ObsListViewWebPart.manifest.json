@@ -1,0 +1,28 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx/client-side-web-part-manifest.schema.json",
+  "id": "58bd3f24-84cd-4d5d-849a-56e924886124",
+  "alias": "ObsListViewWebPart",
+  "componentType": "WebPart",
+  "version": "*",
+  "manifestVersion": 2,
+  "requiresCustomScript": false,
+  "supportedHosts": [
+    "SharePointWebPart",
+    "TeamsPersonalApp",
+    "TeamsTab"
+  ],
+  "preconfiguredEntries": [
+    {
+      "groupId": "5c03119e-3074-46fd-976b-c60198311f70",
+      "group": { "default": "OBS Module" },
+      "title": { "default": "OBS List View" },
+      "description": { "default": "Displays OBS work items in a filterable list view. Replaces the legacy /Obs route." },
+      "officeFabricIconFontName": "ClipboardList",
+      "properties": {
+        "defaultStatusFilter": "",
+        "defaultCategoryFilter": "",
+        "pageSize": 20
+      }
+    }
+  ]
+}
