@@ -4,7 +4,7 @@ This document provides two walkthrough variants for demonstrating the Ops Tracke
 
 ---
 
-## Non-Technical Audience Walkthrough (~18 min)
+## Non-Technical Audience Walkthrough (~20 min)
 
 *This is the PRIMARY walkthrough for the Flank Speed demo.*
 
@@ -145,7 +145,43 @@ Enter this prompt:
 
 ---
 
-### Phase 5: Close (2 min)
+### Phase 5: Full Loop — Cascade Executes a Migration Task (3 min)
+
+*This is the "wow" moment — the AI doesn't just plan, it builds. We go from analysis to working code to a pull request.*
+
+**Step 1: Pick a Task and Start Building (2 min)**
+
+Point to the GitHub issues just created and say:
+
+- "We now have structured migration tasks on GitHub. Let's show what happens when a developer picks one up."
+
+Enter this prompt:
+
+> "Look at the GitHub issue for migrating the OBS Dashboard to SPFx. Create a new branch for this work, then generate an SPFx web part skeleton in TypeScript and React that replaces the OBS Dashboard view. Use PnPjs for data access and include the summary count components."
+
+**Narration while Cascade works:**
+- "Cascade is reading the issue, understanding the requirements, and creating a feature branch"
+- "Now it's generating actual SPFx code — TypeScript, React components, PnPjs data calls"
+- "Notice it's referencing the original .NET dashboard patterns and translating them"
+- "This would normally take a developer hours to scaffold — it's happening in seconds"
+
+**Step 2: Ship It via Pull Request (1 min)**
+
+Enter this prompt:
+
+> "Commit these changes and open a pull request that references the GitHub issue. Include a description of what was migrated and what the next steps are."
+
+**Narration:**
+- "Cascade just committed the code, pushed the branch, and opened a pull request"
+- "The PR references the original migration issue — full traceability"
+- "A reviewer can now look at the generated code, provide feedback, and merge"
+- "This is the complete loop: analyze legacy code → create a plan → execute the plan → ship via pull request — all AI-assisted"
+
+**Quick show** (if time allows): Switch to GitHub in the browser and show the PR and the linked issue.
+
+---
+
+### Phase 6: Close (2 min)
 
 **Key Takeaways:**
 - AI analyzed a complete legacy application and correctly identified two distinct migration paths
@@ -153,7 +189,15 @@ Enter this prompt:
 - **CWA → Power Apps + Power Fx**: Form-heavy patterns (submissions, conditional logic, approvals) belong in Power Apps
 - The AI generated working code equivalents and Power Fx formulas for both paths
 - It created actionable GitHub issues tied to specific source code
+- **It then picked up a task, wrote the code, and opened a pull request** — the full development loop
 - This accelerates migration timelines from months to weeks
+
+**The Full Loop:**
+```
+Analyze Legacy App → Identify Migration Paths → Create Work Items → Execute Task → Open Pull Request
+       ↑                                                                                    ↓
+       └────────────────────── All AI-assisted, all in one IDE ─────────────────────────────┘
+```
 
 **Why two different paths?**
 - "Not everything should be a Power App, and not everything should be an SPFx web part"
@@ -169,7 +213,9 @@ Enter this prompt:
 - Keep energy on the "AI acceleration" narrative, not the code syntax
 - Lead with OBS/SPFx (Demo 1) since it's the primary use case — don't rush it
 - Demo 2 (CWA/Power Apps) reinforces that the AI picks the right tool for the right pattern
+- Phase 5 (Full Loop) is the strongest closer — if short on time, shorten Demo 2 to save time for this
 - If running short on time, you can shorten Demo 2 by combining Steps 1 and 2 into a single prompt
+- Before the demo: make sure `gh auth status` works and you're on the `main` branch with a clean working tree
 
 ---
 
