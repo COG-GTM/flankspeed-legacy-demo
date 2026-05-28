@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CWA Module — Power Apps Migration Preview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f3f2f1;
+      --surface: #ffffff;
+      --purple: #742774;
+      --purple-light: #e8daef;
+      --purple-dark: #5c1f5c;
+      --text: #323130;
+      --text-secondary: #605e5c;
+      --border: #edebe9;
+      --accent: #742774;
+      --critical: #d13438;
+      --high: #ca5010;
+      --medium: #8a8886;
+      --low: #107c10;
+      --success: #107c10;
+      --warning: #ca5010;
+      --pending: #0078d4;
+      --rejected: #d13438;
+      --shadow: 0 1.6px 3.6px rgba(0,0,0,0.09), 0 0.3px 0.9px rgba(0,0,0,0.07);
+      --shadow-lg: 0 6.4px 14.4px rgba(0,0,0,0.1), 0 1.2px 3.6px rgba(0,0,0,0.07);
+      --radius: 8px;
+    }
+
+    body {
+      font-family: 'Inter Tight', 'Segoe UI', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    /* ═══ Power Apps shell ═══ */
+    .pa-header {
+      background: linear-gradient(135deg, #742774 0%, #4b0e4b 100%);
+      color: #fff;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 24px;
+      font-size: 14px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .pa-header .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 15px;
+    }
+    .pa-header .logo-icon {
+      width: 28px; height: 28px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+    .pa-header .nav-links { display: flex; gap: 2px; }
+    .pa-header .nav-links a {
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .pa-header .nav-links a:hover, .pa-header .nav-links a.active {
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+    }
+    .pa-header .user-area {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+    }
+    .pa-header .avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    /* ═══ Power Apps-style screen ═══ */
+    .pa-screen {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .pa-title-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .pa-title-bar h1 {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+    }
+
+    /* ═══ Cards ═══ */
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .card-header {
+      padding: 14px 18px;
+      font-weight: 600;
+      font-size: 15px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-body { padding: 16px 18px; }
+
+    /* ═══ Table ═══ */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .data-table thead {
+      background: #faf9f8;
+      border-bottom: 2px solid var(--border);
+    }
+    .data-table th {
+      text-align: left;
+      padding: 10px 14px;
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: var(--text-secondary);
+    }
+    .data-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #f5f5f5;
+    }
+    .data-table tbody tr:hover { background: #faf9f8; }
+    .data-table a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .data-table a:hover { text-decoration: underline; }
+
+    /* ═══ Badges ═══ */
+    .badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge-critical { background: #fde7e9; color: var(--critical); }
+    .badge-high { background: #fff4ce; color: var(--high); }
+    .badge-medium { background: #f3f2f1; color: var(--medium); }
+    .badge-low { background: #dff6dd; color: var(--low); }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+    }
+
+    /* ═══ Persona ═══ */
+    .persona {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .persona-avatar {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    /* ═══ Buttons ═══ */
+    .btn {
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 20px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--purple-dark); }
+    .btn-success { background: var(--success); color: #fff; }
+    .btn-success:hover { background: #0b6a0b; }
+    .btn-danger { background: var(--critical); color: #fff; }
+    .btn-danger:hover { background: #a52a2a; }
+    .btn-outline {
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+    }
+    .btn-outline:hover { background: var(--purple-light); }
+
+    /* ═══ Form ═══ */
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .form-group .hint {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+    .form-control {
+      font-family: inherit;
+      font-size: 13px;
+      padding: 8px 12px;
+      border: 1px solid #c8c6c4;
+      border-radius: 4px;
+      width: 100%;
+      background: #fff;
+      color: var(--text);
+      transition: border-color 0.15s;
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent);
+    }
+    textarea.form-control { resize: vertical; min-height: 80px; }
+    select.form-control { appearance: auto; }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+
+    .required::after {
+      content: " *";
+      color: var(--critical);
+    }
+
+    /* ═══ Conditional field highlight ═══ */
+    .conditional-field {
+      border: 2px dashed #ca5010;
+      border-radius: 6px;
+      padding: 12px;
+      background: #fff8f0;
+      position: relative;
+    }
+    .conditional-field::before {
+      content: "POWER FX: Visible = If(dropdownPriority.Selected.Value = \"Critical\", true, false)";
+      position: absolute;
+      top: -10px;
+      left: 12px;
+      background: #ca5010;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 1px 8px;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+    }
+
+    /* ═══ Approval workflow ═══ */
+    .approval-timeline {
+      position: relative;
+      padding-left: 32px;
+    }
+    .approval-timeline::before {
+      content: "";
+      position: absolute;
+      left: 14px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--border);
+    }
+    .approval-step {
+      position: relative;
+      padding: 12px 16px;
+      margin-bottom: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+    .approval-step::before {
+      content: "";
+      position: absolute;
+      left: -24px;
+      top: 18px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: #fff;
+    }
+    .approval-step.approved::before { background: var(--success); border-color: var(--success); }
+    .approval-step.rejected::before { background: var(--critical); border-color: var(--critical); }
+    .approval-step.pending::before { background: var(--pending); border-color: var(--pending); }
+    .approval-step.waiting::before { background: #fff; border-color: var(--medium); }
+
+    .step-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .step-name { font-weight: 600; font-size: 14px; }
+    .step-decision {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 2px 10px;
+      border-radius: 12px;
+    }
+    .step-decision.approved { background: #dff6dd; color: var(--success); }
+    .step-decision.rejected { background: #fde7e9; color: var(--critical); }
+    .step-decision.pending { background: #deecf9; color: var(--pending); }
+    .step-decision.waiting { background: #f3f2f1; color: var(--medium); }
+
+    .step-meta { font-size: 12px; color: var(--text-secondary); }
+    .step-actions { margin-top: 10px; display: flex; gap: 8px; }
+
+    /* ═══ Power Automate flow diagram ═══ */
+    .flow-diagram {
+      background: #faf9f8;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .flow-steps {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .flow-step {
+      background: #fff;
+      border: 2px solid var(--accent);
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+      min-width: 130px;
+      color: var(--accent);
+    }
+    .flow-arrow {
+      font-size: 20px;
+      color: var(--accent);
+      padding: 0 6px;
+    }
+    .flow-step.trigger {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    /* ═══ Migration note ═══ */
+    .migration-note {
+      background: #f3edf7;
+      border: 1px solid #d4c4e0;
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      color: #4b0e4b;
+      line-height: 1.6;
+    }
+    .migration-note strong { font-weight: 600; }
+    .migration-note code {
+      background: #e0d4ec;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: 12px;
+    }
+
+    /* ═══ Views ═══ */
+    .view { display: none; }
+    .view.active { display: block; }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 13px;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 14px;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    /* ═══ Filter bar ═══ */
+    .filter-bar {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .filter-bar select, .filter-bar input[type="text"] {
+      font-family: inherit;
+      font-size: 13px;
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #faf9f8;
+      color: var(--text);
+      min-width: 150px;
+    }
+    .filter-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .result-count {
+      margin-left: auto;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    /* ═══ Metadata grid ═══ */
+    .metadata-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      padding: 16px 18px;
+      background: #faf9f8;
+      border-radius: var(--radius);
+      margin-bottom: 16px;
+    }
+    .metadata-item label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+      margin-bottom: 3px;
+    }
+    .metadata-item span { font-size: 14px; }
+  </style>
+</head>
+<body>
+
+  <!-- Power Apps-style header -->
+  <header class="pa-header">
+    <div class="logo">
+      <div class="logo-icon">⚡</div>
+      CWA — Civilian Work Authorization
+    </div>
+    <div class="nav-links">
+      <a onclick="showView('list')" id="tab-list" class="active">Requests</a>
+      <a onclick="showView('create')" id="tab-create">New Request</a>
+      <a onclick="showView('detail')" id="tab-detail">Detail / Approvals</a>
+    </div>
+    <div class="user-area">
+      <span>David Kim</span>
+      <div class="avatar">DK</div>
+    </div>
+  </header>
+
+  <!-- ═══════════════════ LIST VIEW ═══════════════════ -->
+  <div id="view-list" class="view active">
+    <div class="pa-screen">
+      <div class="pa-title-bar">
+        <h1>📋 Work Authorization Requests</h1>
+        <button class="btn btn-primary" onclick="showView('create')">+ New Request</button>
+      </div>
+
+      <div class="migration-note">
+        <strong>Power Apps Gallery:</strong> This list is a Gallery control with delegable filtering.
+        Power Fx: <code>SortByColumns(Filter('CWA Requests', Status.Value = dropdownStatus.Selected.Value), "SubmittedDate", Descending)</code>
+      </div>
+
+      <div class="filter-bar">
+        <span class="filter-label">Filter:</span>
+        <select id="filter-status" onchange="filterTable()">
+          <option value="">All Statuses</option>
+          <option>Pending Approval</option><option>Approved</option>
+          <option>Rejected</option><option>In Progress</option><option>Completed</option>
+        </select>
+        <input type="text" id="filter-search" placeholder="Search requests..." oninput="filterTable()" />
+        <span class="result-count" id="result-count"></span>
+      </div>
+
+      <div class="card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Title</th><th>Category</th><th>Status</th>
+              <th>Priority</th><th>Submitted By</th><th>Submitted</th>
+            </tr>
+          </thead>
+          <tbody id="cwa-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════ CREATE FORM ═══════════════════ -->
+  <div id="view-create" class="view">
+    <div class="pa-screen">
+      <a href="#" class="back-link" onclick="showView('list')">← Back to Requests</a>
+
+      <div class="pa-title-bar">
+        <h1>📝 Submit New Work Authorization</h1>
+      </div>
+
+      <div class="migration-note">
+        <strong>Power Apps EditForm:</strong> This form uses <code>SubmitForm(frmNewRequest)</code> on save.
+        Conditional fields use Power Fx Visible properties. On success: <code>Notify("Request submitted", Success); Navigate(scrDetail)</code>
+      </div>
+
+      <div class="card">
+        <div class="card-header">Request Details</div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="required">Title</label>
+            <input type="text" class="form-control" placeholder="Brief title for the request" value="Server Room Badge Access — Contractor Team Alpha" />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="required">Category</label>
+              <div class="hint">Power Fx: <code>Choices('CWA Requests'.Category)</code></div>
+              <select class="form-control" id="form-category">
+                <option>Facility Access Request</option>
+                <option>Equipment Relocation</option>
+                <option>Travel Authorization</option>
+                <option>Personnel Action</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="required">Priority</label>
+              <select class="form-control" id="form-priority" onchange="toggleConditionalFields()">
+                <option>Medium</option>
+                <option>Low</option>
+                <option>High</option>
+                <option value="Critical">Critical</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="required">Description</label>
+            <textarea class="form-control" rows="3">Requesting badge access to Building 12 Server Room for Contractor Team Alpha (5 members) for the duration of the network upgrade project (March 15 – June 30, 2024).</textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Due Date</label>
+              <input type="date" class="form-control" value="2024-03-15" />
+            </div>
+            <div class="form-group">
+              <label>Assigned To</label>
+              <div class="hint">Power Fx: <code>Office365Users.SearchUser({searchTerm: txtSearch.Text})</code></div>
+              <select class="form-control">
+                <option>Sarah Mitchell</option>
+                <option>Michael Thompson</option>
+                <option>James Rodriguez</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Conditional: Facility Access fields -->
+      <div class="card" id="facility-fields">
+        <div class="card-header">🏢 Facility Access Details</div>
+        <div class="card-body">
+          <div class="migration-note" style="margin-bottom:12px;">
+            <strong>Power Fx Visibility:</strong> <code>Visible = If(dropdownCategory.Selected.Value = "Facility Access Request", true, false)</code>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Building Number</label>
+              <input type="text" class="form-control" placeholder="e.g. Building 12" value="Building 12" />
+            </div>
+            <div class="form-group">
+              <label>Access Level</label>
+              <select class="form-control">
+                <option>Escorted</option>
+                <option>Unescorted</option>
+                <option>Restricted Area</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Conditional: Critical justification -->
+      <div id="critical-justification" style="display:none;">
+        <div class="conditional-field" style="margin-bottom:16px;">
+          <div class="form-group" style="margin-bottom:0; margin-top:8px;">
+            <label class="required">Executive Justification</label>
+            <div class="hint" style="color:#ca5010;">Required when Priority = Critical. Triggers additional Executive Review approval step.</div>
+            <textarea class="form-control" rows="2" placeholder="Explain why this request requires critical priority..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Power Automate flow preview -->
+      <div class="card">
+        <div class="card-header">⚡ Approval Flow (Power Automate)</div>
+        <div class="card-body">
+          <div class="migration-note" style="margin-bottom:12px;">
+            <strong>Power Automate:</strong> On form submit, a flow triggers: <code>When an item is created → Start and wait for an approval → Update item status</code>
+          </div>
+          <div class="flow-diagram">
+            <div class="flow-steps">
+              <div class="flow-step trigger">Form Submitted</div>
+              <span class="flow-arrow">→</span>
+              <div class="flow-step">Supervisor Review</div>
+              <span class="flow-arrow">→</span>
+              <div class="flow-step" id="flow-step2">Security Clearance</div>
+              <span class="flow-arrow" id="flow-arrow3" style="display:none">→</span>
+              <div class="flow-step" id="flow-step3" style="display:none">Executive Review</div>
+              <span class="flow-arrow">→</span>
+              <div class="flow-step">Update Status</div>
+            </div>
+          </div>
+          <p style="font-size:12px; color:var(--text-secondary); text-align:center;">
+            Power Fx: <code>If(Priority = "Critical", 3 approval steps, 2 approval steps)</code>
+          </p>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:10px; margin-top:8px;">
+        <button class="btn btn-primary" onclick="showView('detail')">Submit Request</button>
+        <button class="btn btn-outline" onclick="showView('list')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════ DETAIL / APPROVAL VIEW ═══════════════════ -->
+  <div id="view-detail" class="view">
+    <div class="pa-screen">
+      <a href="#" class="back-link" onclick="showView('list')">← Back to Requests</a>
+
+      <div class="pa-title-bar">
+        <h1>📄 CWA-6: Facility Access Request — Building 12 Server Room</h1>
+      </div>
+
+      <div class="migration-note">
+        <strong>Power Apps Display Form:</strong> Data via <code>LookUp('CWA Requests', ID = paramRequestId)</code>.
+        Approval gallery: <code>Filter('Approval Steps', RequestId = paramRequestId)</code>.
+        Approve button: <code>Patch('Approval Steps', ThisItem, {Decision: "Approved", DecisionDate: Now()})</code>
+      </div>
+
+      <div class="metadata-grid">
+        <div class="metadata-item">
+          <label>Status</label>
+          <span class="status-pill"><span class="status-dot" style="background:#0078d4"></span> Pending Approval</span>
+        </div>
+        <div class="metadata-item">
+          <label>Priority</label>
+          <span class="badge badge-critical">Critical</span>
+        </div>
+        <div class="metadata-item">
+          <label>Category</label>
+          <span>Facility Access Request</span>
+        </div>
+        <div class="metadata-item">
+          <label>Submitted By</label>
+          <span class="persona">
+            <span class="persona-avatar" style="background:#8764b8">DK</span>
+            David Kim
+          </span>
+        </div>
+        <div class="metadata-item">
+          <label>Building</label>
+          <span>Building 12</span>
+        </div>
+        <div class="metadata-item">
+          <label>Access Level</label>
+          <span>Restricted Area</span>
+        </div>
+        <div class="metadata-item">
+          <label>Submitted</label>
+          <span>Mar 12, 2024</span>
+        </div>
+        <div class="metadata-item">
+          <label>Due Date</label>
+          <span style="color:var(--warning); font-weight:600;">Mar 15, 2024</span>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-header">Description</div>
+        <div class="card-body" style="font-size:14px; line-height:1.7;">
+          Requesting badge access to Building 12 Server Room for Contractor Team Alpha (5 members) for the duration of the network upgrade project. Requires security clearance verification due to restricted area classification. Critical priority due to project start date of March 15.
+        </div>
+      </div>
+
+      <!-- Justification (shown for Critical) -->
+      <div class="card" style="margin-bottom:16px; border-color: #ca5010;">
+        <div class="card-header" style="color: #ca5010;">⚠ Executive Justification (Critical Priority)</div>
+        <div class="card-body" style="font-size:14px; line-height:1.7;">
+          Network upgrade project has a hard deadline of March 15 mandated by DISA. Any delay will impact the agency's Authority to Operate (ATO) renewal. Contractor team cannot begin work without physical access to Building 12 server infrastructure.
+        </div>
+      </div>
+
+      <!-- Approval Workflow -->
+      <div class="card">
+        <div class="card-header">🔐 Approval Workflow</div>
+        <div class="card-body">
+          <div class="migration-note" style="margin-bottom:14px;">
+            <strong>Power Automate:</strong> Each step is an approval action. When all steps are "Approved", the flow sets status to "Approved" via
+            <code>Patch('CWA Requests', ThisItem, {Status: {Value: "Approved"}})</code>.
+            If any step is "Rejected", status becomes "Rejected" immediately.
+          </div>
+
+          <div class="approval-timeline">
+            <!-- Step 1: Approved -->
+            <div class="approval-step approved">
+              <div class="step-header">
+                <span class="step-name">Step 1: Supervisor Review</span>
+                <span class="step-decision approved">Approved</span>
+              </div>
+              <div class="step-meta">
+                <span class="persona">
+                  <span class="persona-avatar" style="background:#107c10; width:22px; height:22px; font-size:9px;">MT</span>
+                  Michael Thompson
+                </span>
+                · Mar 12, 2024, 3:45 PM
+              </div>
+              <div class="step-meta" style="margin-top:4px; font-style:italic;">
+                "Team is cleared for the project. Proceed to security verification."
+              </div>
+            </div>
+
+            <!-- Step 2: Pending (current approver) -->
+            <div class="approval-step pending">
+              <div class="step-header">
+                <span class="step-name">Step 2: Security Clearance Verification</span>
+                <span class="step-decision pending">Pending</span>
+              </div>
+              <div class="step-meta">
+                <span class="persona">
+                  <span class="persona-avatar" style="background:#ca5010; width:22px; height:22px; font-size:9px;">JR</span>
+                  James Rodriguez
+                </span>
+                · Awaiting decision
+              </div>
+              <div class="step-actions">
+                <button class="btn btn-success" onclick="approveStep(this)">✓ Approve</button>
+                <button class="btn btn-danger" onclick="rejectStep(this)">✗ Reject</button>
+                <input type="text" class="form-control" style="max-width:300px; display:inline-block;" placeholder="Remarks (optional)" />
+              </div>
+            </div>
+
+            <!-- Step 3: Waiting (Critical only) -->
+            <div class="approval-step waiting">
+              <div class="step-header">
+                <span class="step-name">Step 3: Executive Review</span>
+                <span class="step-decision waiting">Waiting</span>
+              </div>
+              <div class="step-meta">
+                <span class="persona">
+                  <span class="persona-avatar" style="background:#0f6cbd; width:22px; height:22px; font-size:9px;">SM</span>
+                  Sarah Mitchell (Admin)
+                </span>
+                · Waiting for previous step
+              </div>
+              <div class="step-meta" style="margin-top:4px;">
+                <span style="font-size:11px; background:#fff4ce; color:#ca5010; padding:1px 6px; border-radius:3px; font-weight:600;">
+                  Added because Priority = Critical
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Power Automate Flow Visualization -->
+      <div class="card">
+        <div class="card-header">⚡ Power Automate Flow</div>
+        <div class="card-body">
+          <div class="flow-diagram">
+            <div class="flow-steps">
+              <div class="flow-step trigger">Item Created</div>
+              <span class="flow-arrow">→</span>
+              <div class="flow-step" style="border-color:var(--success);">Supervisor<br>✓ Approved</div>
+              <span class="flow-arrow">→</span>
+              <div class="flow-step" style="border-color:var(--pending); border-style:dashed;">Security<br>⏳ Pending</div>
+              <span class="flow-arrow">→</span>
+              <div class="flow-step" style="border-color:var(--medium); opacity:0.6;">Executive<br>⏸ Waiting</div>
+              <span class="flow-arrow">→</span>
+              <div class="flow-step" style="opacity:0.4;">Update Status</div>
+            </div>
+          </div>
+          <p style="font-size:12px; color:var(--text-secondary); text-align:center; margin-top:8px;">
+            Power Fx outcome logic: <code>If(CountRows(Filter(ApprovalSteps, Decision="Rejected")) > 0, "Rejected", If(CountRows(Filter(ApprovalSteps, Decision="Approved")) = CountRows(ApprovalSteps), "Approved", "Pending"))</code>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+const STATUS_COLORS = {
+  "Pending Approval": "#0078d4", "Approved": "#107c10", "Rejected": "#d13438",
+  "In Progress": "#ca5010", "Completed": "#424242", "Draft": "#8a8886"
+};
+
+const USERS = [
+  { name: "Sarah Mitchell", initials: "SM", color: "#0f6cbd" },
+  { name: "Michael Thompson", initials: "MT", color: "#107c10" },
+  { name: "David Kim", initials: "DK", color: "#8764b8" },
+  { name: "James Rodriguez", initials: "JR", color: "#ca5010" },
+];
+
+const CWA_ITEMS = [
+  { id: 6, title: "Facility Access Request — Building 12 Server Room", category: "Facility Access Request", status: "Pending Approval", priority: "Critical", submitter: 2, date: "2024-03-12" },
+  { id: 7, title: "Equipment Relocation — Data Center Move Phase 1", category: "Equipment Relocation", status: "Approved", priority: "High", submitter: 0, date: "2024-02-28" },
+  { id: 8, title: "Travel Authorization — DC Security Conference", category: "Travel Authorization", status: "Pending Approval", priority: "Medium", submitter: 3, date: "2024-03-05" },
+  { id: 9, title: "Personnel Action — Contractor Onboarding (Team Bravo)", category: "Personnel Action", status: "In Progress", priority: "High", submitter: 0, date: "2024-03-01" },
+  { id: 10, title: "Facility Access Request — Warehouse B Loading Dock", category: "Facility Access Request", status: "Approved", priority: "Low", submitter: 2, date: "2024-02-15" },
+  { id: 11, title: "Equipment Relocation — Office 4th Floor Restructure", category: "Equipment Relocation", status: "Rejected", priority: "Medium", submitter: 1, date: "2024-02-20" },
+  { id: 12, title: "Travel Authorization — Norfolk Base Inspection", category: "Travel Authorization", status: "Completed", priority: "Low", submitter: 3, date: "2024-01-10" },
+  { id: 13, title: "Personnel Action — Annual Security Clearance Renewal", category: "Personnel Action", status: "Pending Approval", priority: "High", submitter: 1, date: "2024-03-10" },
+];
+
+function priorityClass(p) { return "badge-" + p.toLowerCase(); }
+function formatDate(d) { return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }); }
+
+function renderTable(items) {
+  const tbody = document.getElementById("cwa-tbody");
+  tbody.innerHTML = items.map(item => {
+    const u = USERS[item.submitter];
+    return `<tr>
+      <td><a href="#" onclick="showView('detail')">CWA-${item.id}</a></td>
+      <td><a href="#" onclick="showView('detail')">${item.title}</a></td>
+      <td>${item.category}</td>
+      <td><span class="status-pill"><span class="status-dot" style="background:${STATUS_COLORS[item.status]}"></span>${item.status}</span></td>
+      <td><span class="badge ${priorityClass(item.priority)}">${item.priority}</span></td>
+      <td><span class="persona"><span class="persona-avatar" style="background:${u.color}">${u.initials}</span>${u.name}</span></td>
+      <td>${formatDate(item.date)}</td>
+    </tr>`;
+  }).join("");
+  document.getElementById("result-count").textContent = `${items.length} request${items.length !== 1 ? "s" : ""}`;
+}
+
+function filterTable() {
+  const s = document.getElementById("filter-status").value;
+  const q = document.getElementById("filter-search").value.toLowerCase();
+  const filtered = CWA_ITEMS.filter(item =>
+    (!s || item.status === s) &&
+    (!q || item.title.toLowerCase().includes(q))
+  );
+  renderTable(filtered);
+}
+
+function toggleConditionalFields() {
+  const p = document.getElementById("form-priority").value;
+  const justEl = document.getElementById("critical-justification");
+  const step3 = document.getElementById("flow-step3");
+  const arrow3 = document.getElementById("flow-arrow3");
+  if (p === "Critical") {
+    justEl.style.display = "block";
+    step3.style.display = "block";
+    arrow3.style.display = "inline";
+  } else {
+    justEl.style.display = "none";
+    step3.style.display = "none";
+    arrow3.style.display = "none";
+  }
+}
+
+function approveStep(btn) {
+  const step = btn.closest(".approval-step");
+  step.classList.remove("pending");
+  step.classList.add("approved");
+  step.querySelector(".step-decision").className = "step-decision approved";
+  step.querySelector(".step-decision").textContent = "Approved";
+  step.querySelector(".step-actions").innerHTML = '<span style="color:var(--success); font-weight:600; font-size:13px;">✓ Approved just now</span>';
+  // Activate next step
+  const next = step.nextElementSibling;
+  if (next && next.classList.contains("waiting")) {
+    next.classList.remove("waiting");
+    next.classList.add("pending");
+    next.querySelector(".step-decision").className = "step-decision pending";
+    next.querySelector(".step-decision").textContent = "Pending";
+    const meta = next.querySelector(".step-meta");
+    meta.textContent = meta.textContent.replace("Waiting for previous step", "Awaiting decision");
+  }
+}
+
+function rejectStep(btn) {
+  const step = btn.closest(".approval-step");
+  step.classList.remove("pending");
+  step.classList.add("rejected");
+  step.querySelector(".step-decision").className = "step-decision rejected";
+  step.querySelector(".step-decision").textContent = "Rejected";
+  step.querySelector(".step-actions").innerHTML = '<span style="color:var(--critical); font-weight:600; font-size:13px;">✗ Rejected just now — request status set to Rejected</span>';
+}
+
+function showView(view) {
+  document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+  document.querySelectorAll(".nav-links a").forEach(a => a.classList.remove("active"));
+  document.getElementById("view-" + view).classList.add("active");
+  document.getElementById("tab-" + view).classList.add("active");
+  window.scrollTo(0, 0);
+}
+
+renderTable(CWA_ITEMS);
+</script>
+</body>
+</html>
