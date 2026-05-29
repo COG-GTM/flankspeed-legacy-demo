@@ -10,7 +10,7 @@
  * - Conditional logic for auto-creating steps based on category/priority
  * - Status transition logic on final approval/rejection
  */
-import { ApprovalStep, ApprovalDecision } from "../models";
+import { ApprovalStep } from "../models";
 
 export interface ApprovalRequest {
   approvalStepId: number;

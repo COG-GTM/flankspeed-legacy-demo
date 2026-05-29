@@ -18,7 +18,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   WorkItemFormData,
   Category,
-  Priority,
   AccessLevel,
   PRIORITIES,
   ACCESS_LEVELS,
