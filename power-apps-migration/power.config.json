@@ -1,0 +1,37 @@
+{
+  "$schema": "https://aka.ms/power-apps/code-apps/schema",
+  "displayName": "CWA Work Requests",
+  "description": "CWA Work Requests module — migrated from .NET 8 MVC legacy application to Power Apps Code App",
+  "environmentId": "<POWER_PLATFORM_ENVIRONMENT_ID>",
+  "dataSources": [
+    {
+      "name": "AzureSqlWorkItems",
+      "connectorId": "shared_sql",
+      "connectionId": "<SQL_CONNECTION_ID>",
+      "server": "<AZURE_SQL_SERVER>.database.windows.net",
+      "database": "FlankSpeedLegacyDemo",
+      "tables": [
+        "[dbo].[WorkItems]",
+        "[dbo].[Users]",
+        "[dbo].[Categories]",
+        "[dbo].[Statuses]",
+        "[dbo].[ApprovalSteps]",
+        "[dbo].[Comments]",
+        "[dbo].[Attachments]",
+        "[dbo].[AuditLogs]"
+      ]
+    }
+  ],
+  "authentication": {
+    "provider": "MicrosoftEntra",
+    "scopes": [
+      "User.Read",
+      "Sites.Read.All"
+    ]
+  },
+  "deployment": {
+    "solutionName": "CWAWorkRequests",
+    "solutionPublisher": "OpsTracker",
+    "version": "1.0.0.0"
+  }
+}
