@@ -1,6 +1,6 @@
 # Ops Tracker — Legacy .NET 8 MVC Application
 
-**Ops Tracker** is a legacy-style .NET 8 MVC + SQL Server internal operations tool used by a fictional government team. It manages work requests and operational records across two functional areas. This application is the starting point for two M365/Flank Speed modernization demos using Windsurf IDE.
+**Ops Tracker** is a legacy-style .NET 8 MVC + SQLite internal operations tool used by a fictional government team. It manages work requests and operational records across two functional areas. This application is the starting point for two M365/Flank Speed modernization demos using Windsurf IDE.
 
 ---
 
@@ -79,7 +79,7 @@ dotnet restore
 dotnet run
 
 # 5. Open in browser
-# Navigate to https://localhost:5001 (or the URL shown in terminal)
+# Navigate to http://localhost:5000 (or the URL shown in terminal)
 # SQLite database auto-creates and seeds on first run
 ```
 
@@ -123,24 +123,42 @@ See [DEMO-WALKTHROUGH.md](DEMO-WALKTHROUGH.md) for the full scripted walkthrough
 
 ## Architecture Notes
 
-- **Single SQL Server database** with shared schema across both modules
-- **Entity Framework Core** for data access with code-first migrations
+See [docs/architecture.md](docs/architecture.md) for the full architecture, routes and approval rules.
+
+![Ops Tracker architecture](docs/diagrams/architecture.png)
+
+Diagram source: [docs/diagrams/architecture.dot](docs/diagrams/architecture.dot) (Graphviz; run `docs/diagrams/render.sh` to regenerate the [PNG](docs/diagrams/architecture.png) and [SVG](docs/diagrams/architecture.svg)).
+
+- **Single SQLite database** (`FlankSpeedLegacyDemo.db`) with a shared schema across both modules; work items are split by a `Module` column
+- **Entity Framework Core 8** for data access; the schema is created with `EnsureCreated()` (no migrations)
 - **MVC pattern** with server-rendered Razor views (no SPA, no API layer — intentionally legacy)
 - **Session-based mock authentication** — user switcher simulates different roles
-- **Bootstrap 3.3.7** for intentionally dated UI styling
+- **Bootstrap 3.3.7** (from CDN) for intentionally dated UI styling
 - **Migration notes throughout** — comments mark migration-relevant patterns with `[SPFx]` and `[PowerApp]` tags
 - **Auto-seeding** — database creates and populates on first run for zero-config demos
+- **OBS migration end state** in `spfx-migration-sp/` — SPFx web parts reading SharePoint lists through PnPjs
+- **Static previews** — `index.html` and `spfx-migration-sp/preview-app/` are hosted as a static site on Vercel (`vercel.json`)
 
 ---
 
 ## Project Structure
 
 ```
-FlankSpeedLegacyDemo.Web/
-├── Controllers/       → Business logic (maps to SPFx/Power App actions)
-├── Models/            → Entity classes (maps to Dataverse/SharePoint Lists)
-├── Views/             → Razor templates (maps to SPFx React / Power Apps screens)
-├── Data/              → EF Core context and seed data
-├── Services/          → Mock auth service (maps to Azure AD/M365 auth)
-└── wwwroot/           → Static assets (CSS, JS)
+FlankSpeedLegacyDemo.Web/   → Legacy .NET 8 MVC app
+├── Controllers/            → Business logic (maps to SPFx/Power App actions)
+├── Models/                 → Entity classes (maps to Dataverse/SharePoint Lists)
+├── Views/                  → Razor templates (maps to SPFx React / Power Apps screens)
+├── Data/                   → EF Core context and seed data
+├── Services/               → Mock auth service (maps to Azure AD/M365 auth)
+└── wwwroot/                → Static assets (CSS, JS)
+spfx-migration-sp/          → OBS migration end state
+├── obs-webparts/           → SPFx 1.18.2 project (builds obs-webparts.sppkg)
+├── provisioning/           → PnP.PowerShell scripts that create and seed the SharePoint lists
+├── power-fx-formulas/      → C# LINQ → Power Fx mapping
+├── preview-app/            → Static HTML mockups (OBS SPFx, CWA Power Apps)
+├── docs/                   → Before/after comparison, list provisioning
+└── DEPLOYMENT.md           → SharePoint deployment guide
+spfx-migration/             → Earlier OBS web parts copy without SPFx build config
+docs/                       → Architecture doc, diagram sources, migration overview
+index.html, vercel.json     → Static landing page and Vercel hosting config
 ```
