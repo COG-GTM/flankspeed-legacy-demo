@@ -21,7 +21,7 @@ The diagram source is [`diagrams/architecture.dot`](diagrams/architecture.dot) (
 | Schema | `Database.EnsureCreated()` at startup. There are no EF migrations in the repo. |
 | Seed data | `Data/SeedData.cs` runs on every startup and seeds an empty database with 10 users, 8 categories, 10 statuses, 20 work items (10 OBS, 10 CWA), 28 comments, 10 attachments, 15 audit entries and 8 approval steps. Attachments are metadata rows only; no file storage exists. |
 | Auth | None. `Services/CurrentUserService` stores `CurrentUserId` in the ASP.NET Core session (30-minute idle timeout), and defaults to user 1 (Sarah Mitchell, Admin). The navbar user switcher posts to `/Home/SetUser`. |
-| API | None. All interaction is HTML forms posting back to MVC actions with anti-forgery tokens. |
+| API | No JSON API. List filters use GET query strings; write forms POST to MVC actions with anti-forgery tokens. |
 
 Both modules share one `WorkItems` table, told apart by the `Module` column (`"OBS"` or `"CWA"`). Categories and statuses carry a `Module` value too (`Shared` statuses apply to both).
 
