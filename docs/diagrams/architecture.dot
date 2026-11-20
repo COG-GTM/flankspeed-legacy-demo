@@ -1,0 +1,72 @@
+// Ops Tracker (flankspeed-legacy-demo) architecture.
+// Edit this file, then run ./render.sh to regenerate architecture.png and architecture.svg.
+digraph ops_tracker {
+  graph [rankdir=TB, fontname="DejaVu Sans", fontsize=18, nodesep=0.45, ranksep=0.55,
+         pad=0.3, labelloc=t, label="Ops Tracker: legacy app, migration artifacts and previews"];
+  node  [shape=box, style="rounded,filled", fillcolor=white, fontname="DejaVu Sans", fontsize=16, margin="0.18,0.08"];
+  edge  [fontname="DejaVu Sans", fontsize=13, color="#444444"];
+
+  user [label="Browser user\n(user switcher in navbar)", shape=oval, fillcolor="#fff3cd"];
+
+  subgraph cluster_legacy {
+    label="FlankSpeedLegacyDemo.Web (.NET 8 MVC, Kestrel :5000)";
+    style="rounded,filled"; fillcolor="#e8f0fe"; color="#4a6fa5"; fontsize=17;
+
+    views [label="Razor views\nBootstrap 3.3.7 + jQuery (CDN)\nwwwroot/js/cwa-form.js"];
+    subgraph cluster_ctrl {
+      label="Controllers"; style="rounded"; color="#4a6fa5"; fillcolor="#e8f0fe";
+      home [label="HomeController\n/  ·  POST /Home/SetUser"];
+      obs  [label="ObsController (Module A)\n/Obs  /Obs/Dashboard\n/Obs/Details|Edit/{id}\nAddComment · UpdateStatus"];
+      cwa  [label="CwaController (Module B)\n/Cwa  /Cwa/Create\n/Cwa/Details|Edit/{id}\nApprove · AddComment"];
+      { rank=same; home; obs; cwa; }
+    }
+    cus  [label="CurrentUserService\nsession key CurrentUserId\n(default user 1)"];
+    ctx  [label="AppDbContext (EF Core 8)\n8 entities, EnsureCreated\n+ SeedData on startup"];
+    { rank=same; cus; ctx; }
+  }
+
+  db [label="SQLite file\nFlankSpeedLegacyDemo.db", shape=cylinder, fillcolor="#fde2e2"];
+
+  subgraph cluster_spfx {
+    label="spfx-migration-sp/ (OBS end state, SPFx 1.18.2)";
+    style="rounded,filled"; fillcolor="#e6f4ea"; color="#3c8d5a"; fontsize=17;
+    webparts [label="obs-webparts\nObsListView · ObsDashboard · ObsDetailView\n(React 17 + Fluent UI 8)"];
+    svc      [label="ObsDataService\n(PnPjs 3.22)"];
+    prov     [label="provisioning/*.ps1\nCreate-OBSLists · Import-OBSSeedData\n(PnP.PowerShell)"];
+    { rank=same; svc; prov; }
+  }
+
+  sp [label="SharePoint Online lists\nStatuses · Categories · OBS Work Items\nComments · Audit Log", shape=cylinder, fillcolor="#d7f0dd"];
+  catalog [label="App Catalog\nobs-webparts.sppkg", fillcolor="#d7f0dd"];
+
+  subgraph cluster_static {
+    label="Static previews (Vercel, vercel.json)";
+    style="rounded,filled"; fillcolor="#f3e8fd"; color="#7a4fa5"; fontsize=17;
+    landing  [label="index.html\nlanding page"];
+    previews [label="spfx-migration-sp/preview-app/\nindex.html (OBS SPFx mockup)\ncwa-powerapp.html (CWA Power Apps mockup)"];
+  }
+
+  powerapps [label="Power Apps + Power Automate\n(CWA target: docs and mockup only,\nno app source in repo)", style="rounded,dashed,filled", fillcolor="#f5f5f5"];
+  ci [label="GitHub Actions build.yml\nwindows-latest: restore + build\n(test step is a placeholder)", fillcolor="#f5f5f5"];
+
+  user -> home [label="HTTP"];
+  user -> obs; user -> cwa;
+  home -> views; obs -> views; cwa -> views;
+  home -> cus [style=dashed]; obs -> cus [style=dashed]; cwa -> cus [style=dashed];
+  home -> ctx; obs -> ctx; cwa -> ctx;
+  cus -> ctx [label="Users.Find"];
+  ctx -> db [label="Microsoft.EntityFrameworkCore.Sqlite"];
+
+  obs -> webparts [label="migrates to", style=dashed, color="#3c8d5a", fontcolor="#3c8d5a"];
+  cwa -> powerapps [label="migrates to", style=dashed, color="#7a4fa5", fontcolor="#7a4fa5"];
+  webparts -> svc;
+  svc -> sp [label="REST (OData)"];
+  prov -> sp [label="create + seed"];
+  webparts -> catalog [label="gulp package-solution --ship"];
+
+  landing -> previews [label="links"];
+  // layout only: keep previews and CI below the data stores
+  sp -> landing [style=invis];
+  db -> ci [style=invis];
+  catalog -> previews [style=invis];
+}

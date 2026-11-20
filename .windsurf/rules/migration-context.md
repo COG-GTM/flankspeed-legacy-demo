@@ -1,6 +1,6 @@
 # Migration Context
 
-This is a legacy .NET 8 MVC application backed by SQL Server called "Ops Tracker."
+This is a legacy .NET 8 MVC application backed by SQLite (EF Core) called "Ops Tracker."
 It is being evaluated for modernization into Microsoft 365 / Flank Speed.
 
 There are two modules:

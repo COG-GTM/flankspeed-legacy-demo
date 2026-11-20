@@ -7,7 +7,7 @@ This folder contains the migrated OBS (Operational Business Systems) module, reb
 | Legacy (.NET MVC) | Migrated (SPFx + Power Fx) |
 |---|---|
 | Razor views + jQuery | React components in SPFx web parts |
-| SQL Server + EF Core | SharePoint Lists via PnPjs |
+| SQLite + EF Core | SharePoint Lists via PnPjs |
 | Server-side C# controllers | Client-side TypeScript + Power Fx expressions |
 | Session-based mock auth | Azure AD / M365 identity (automatic) |
 | Bootstrap 3.3.7 | Fluent UI (SharePoint native styling) |
@@ -52,7 +52,7 @@ npm install
 gulp serve
 ```
 
-This launches the SPFx workbench where you can preview the web parts with mock data.
+Requires Node 18 (`engines` in `package.json`). This opens the hosted SharePoint workbench (`https://{tenantDomain}/_layouts/workbench.aspx`, set in `config/serve.json`). The web parts have no mock data source; they read the SharePoint lists created by `provisioning/Create-OBSLists.ps1`, so run the provisioning scripts on the target site first.
 
 ## Deployment
 

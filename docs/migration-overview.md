@@ -41,12 +41,19 @@ Windsurf (with Cascade AI) can:
 - GitHub Pull Requests manage code review for new migration artifacts
 - Windsurf connects to GitHub via the MCP plugin for seamless integration
 
+## Where the Migration Stands
+
+- **Module A (OBS):** the SPFx end state is in `spfx-migration-sp/` (web parts, SharePoint list provisioning, deployment guide).
+- **Module B (CWA):** the Power Apps target is described in docs and shown in the static mockup `spfx-migration-sp/preview-app/cwa-powerapp.html`; no Power Apps source is in the repo.
+
+See [architecture.md](architecture.md) for the current architecture diagram.
+
 ## Migration Path Diagram
 
 ```
 ┌─────────────────────────┐
 │    Ops Tracker (.NET)    │
-│    SQL Server LocalDB    │
+│      SQLite (EF Core)    │
 └───────────┬─────────────┘
             │
     ┌───────┴───────┐
