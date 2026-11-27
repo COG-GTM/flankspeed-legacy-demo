@@ -196,10 +196,10 @@ public class CwaController : Controller
             .Include(w => w.Status)
             .Include(w => w.SubmittedByUser)
             .Include(w => w.AssignedToUser)
-            .Include(w => w.Comments!).ThenInclude(c => c.AuthorUser)
-            .Include(w => w.Attachments!).ThenInclude(a => a.UploadedByUser)
-            .Include(w => w.AuditLogs!).ThenInclude(al => al.PerformedByUser)
-            .Include(w => w.ApprovalSteps!).ThenInclude(a => a.ApproverUser)
+            .Include(w => w.Comments!.OrderBy(c => c.Id)).ThenInclude(c => c.AuthorUser)
+            .Include(w => w.Attachments!.OrderBy(a => a.Id)).ThenInclude(a => a.UploadedByUser)
+            .Include(w => w.AuditLogs!.OrderBy(al => al.Id)).ThenInclude(al => al.PerformedByUser)
+            .Include(w => w.ApprovalSteps!.OrderBy(a => a.Id)).ThenInclude(a => a.ApproverUser)
             .AsSplitQuery()
             .FirstOrDefault(w => w.Id == id && w.Module == "CWA");
 
