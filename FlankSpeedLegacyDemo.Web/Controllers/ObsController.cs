@@ -102,6 +102,7 @@ public class ObsController : Controller
             .Include(w => w.Comments!).ThenInclude(c => c.AuthorUser)
             .Include(w => w.Attachments!).ThenInclude(a => a.UploadedByUser)
             .Include(w => w.AuditLogs!).ThenInclude(al => al.PerformedByUser)
+            .AsSplitQuery()
             .FirstOrDefault(w => w.Id == id && w.Module == "OBS");
 
         if (item == null)

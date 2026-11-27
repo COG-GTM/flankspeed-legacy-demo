@@ -200,6 +200,7 @@ public class CwaController : Controller
             .Include(w => w.Attachments!).ThenInclude(a => a.UploadedByUser)
             .Include(w => w.AuditLogs!).ThenInclude(al => al.PerformedByUser)
             .Include(w => w.ApprovalSteps!).ThenInclude(a => a.ApproverUser)
+            .AsSplitQuery()
             .FirstOrDefault(w => w.Id == id && w.Module == "CWA");
 
         if (item == null)
